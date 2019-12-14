@@ -147,7 +147,7 @@ def train(X, Y, epochs, learning_rate):
         # TODO:
         # calculate cost and accuracy and add to history
         
-        gradient = full_backward_propagation(Y_hat, Y, cache, params)
+        gradient = backward(Y_hat, Y, cache, params)
 
         params = update(params, gradient, learning_rate)
         
