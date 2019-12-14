@@ -1,2 +1,3 @@
 # ML
-ML Stuff
+
+ML stuff, homework, implementations and research.
