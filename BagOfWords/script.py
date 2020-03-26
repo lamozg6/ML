@@ -45,6 +45,9 @@ def find_element_in_list(element, lst):
           
 def word_vectors(words, base_vocabulary):
     bug_of_words = np.zeros(shape=(len(words), x), dtype = np.int32)
+    
+    dummy = [' ' for x in range(w)]
+    words = dummy + words + dummy
 
     for i in range(w, len(words) - w):
         for j in range (i - w, i + w + 1):
@@ -52,6 +55,8 @@ def word_vectors(words, base_vocabulary):
                 word_idx = find_element_in_list(words[j], base_vocabulary)
                 if word_idx != None:
                     bug_of_words[i - w][word_idx] += 1
+                    
+    words = words[w:-w]
                     
     return bug_of_words
 
@@ -74,13 +79,8 @@ if __name__ == '__main__':
     fdist = FreqDist(words)
 
     base_vocabulary = [word for (word, count) in fdist.most_common(x)]
-
-    dummy = [' ' for x in range(w)]
-    words = dummy + words + dummy
     
     bug_of_words = word_vectors(words, base_vocabulary)
-
-    words = words[w:-w]
     
     vectors_to_file(words, bug_of_words)
     
