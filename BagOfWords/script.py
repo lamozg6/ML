@@ -43,7 +43,7 @@ def find_element_in_list(element, lst):
     except ValueError:
         return None
           
-def word_to_vector_dictionary(words, bag_of_words):
+def sum_duplicate_words_vectors(words, bag_of_words):
     ret = dict()
     
     for i, word in enumerate(words):
@@ -54,7 +54,7 @@ def word_to_vector_dictionary(words, bag_of_words):
         
     return ret
           
-def word_vectors(words, base_vocabulary):
+def word_to_vector_dictionary(words, base_vocabulary):
     bag_of_words = np.zeros(shape=(len(words), x), dtype = np.int32)
     
     dummy = [' ' for x in range(w)]
@@ -69,7 +69,7 @@ def word_vectors(words, base_vocabulary):
                     
     words = words[w:-w]
     
-    return bag_of_words
+    return sum_duplicate_words_vectors(words, bag_of_words)
 
 def vectors_to_file(word_dict):
     out = open(args.outf, "w")
@@ -89,12 +89,10 @@ if __name__ == '__main__':
     fdist = FreqDist(words)
 
     base_vocabulary = [word for (word, count) in fdist.most_common(x)]
-    
-    bag_of_words = word_vectors(words, base_vocabulary)
-    
-    word_dict = word_to_vector_dictionary(words, bag_of_words)
+
+    word_dict = word_to_vector_dictionary(words, base_vocabulary)
     
     vectors_to_file(word_dict)
     
-    kmeans = k_means(bag_of_words)
+    kmeans = k_means(list(word_dict.values()))
     #print(kmeans.labels_)
