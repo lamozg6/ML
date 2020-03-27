@@ -43,6 +43,17 @@ def find_element_in_list(element, lst):
     except ValueError:
         return None
           
+def word_to_vector_dictionary(words, bug_of_words):
+    ret = dict()
+    
+    for i, word in enumerate(words):
+        if word not in ret:
+            ret[word] = bug_of_words[i]
+        else:
+            ret[word] += bug_of_words[i]
+        
+    return ret
+          
 def word_vectors(words, base_vocabulary):
     bug_of_words = np.zeros(shape=(len(words), x), dtype = np.int32)
     
@@ -57,18 +68,17 @@ def word_vectors(words, base_vocabulary):
                     bug_of_words[i - w][word_idx] += 1
                     
     words = words[w:-w]
-                    
+    
     return bug_of_words
 
-def vectors_to_file(words, bug_of_words):
+def vectors_to_file(word_dict):
     out = open(args.outf, "w")
-    for idx in range(len(words)):
-        out.write(words[idx] + ' -> ' + np.array2string(bug_of_words[idx]) + '\n')
+    for word, vec in word_dict.items():
+        out.write(word + ' -> ' + np.array2string(vec) + '\n')
     out.close()
     
 def k_means(bug_of_words):
-    kmeans = KMeans(n_clusters=args.n_clusters, random_state=0).fit(bug_of_words)
-    print(kmeans.labels_)
+    return KMeans(n_clusters=args.n_clusters, random_state=0).fit(bug_of_words)
     
 if __name__ == '__main__':
     file = open(args.inf, "r") 
@@ -82,6 +92,9 @@ if __name__ == '__main__':
     
     bug_of_words = word_vectors(words, base_vocabulary)
     
-    vectors_to_file(words, bug_of_words)
+    word_dict = word_to_vector_dictionary(words, bug_of_words)
     
-    k_means(bug_of_words)
+    vectors_to_file(word_dict)
+    
+    kmeans = k_means(bug_of_words)
+    #print(kmeans.labels_)
