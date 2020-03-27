@@ -43,19 +43,19 @@ def find_element_in_list(element, lst):
     except ValueError:
         return None
           
-def word_to_vector_dictionary(words, bug_of_words):
+def word_to_vector_dictionary(words, bag_of_words):
     ret = dict()
     
     for i, word in enumerate(words):
         if word not in ret:
-            ret[word] = bug_of_words[i]
+            ret[word] = bag_of_words[i]
         else:
-            ret[word] += bug_of_words[i]
+            ret[word] += bag_of_words[i]
         
     return ret
           
 def word_vectors(words, base_vocabulary):
-    bug_of_words = np.zeros(shape=(len(words), x), dtype = np.int32)
+    bag_of_words = np.zeros(shape=(len(words), x), dtype = np.int32)
     
     dummy = [' ' for x in range(w)]
     words = dummy + words + dummy
@@ -65,11 +65,11 @@ def word_vectors(words, base_vocabulary):
             if j != i:
                 word_idx = find_element_in_list(words[j], base_vocabulary)
                 if word_idx != None:
-                    bug_of_words[i - w][word_idx] += 1
+                    bag_of_words[i - w][word_idx] += 1
                     
     words = words[w:-w]
     
-    return bug_of_words
+    return bag_of_words
 
 def vectors_to_file(word_dict):
     out = open(args.outf, "w")
@@ -77,8 +77,8 @@ def vectors_to_file(word_dict):
         out.write(word + ' -> ' + np.array2string(vec) + '\n')
     out.close()
     
-def k_means(bug_of_words):
-    return KMeans(n_clusters=args.n_clusters, random_state=0).fit(bug_of_words)
+def k_means(bag_of_words):
+    return KMeans(n_clusters=args.n_clusters, random_state=0).fit(bag_of_words)
     
 if __name__ == '__main__':
     file = open(args.inf, "r") 
@@ -90,11 +90,11 @@ if __name__ == '__main__':
 
     base_vocabulary = [word for (word, count) in fdist.most_common(x)]
     
-    bug_of_words = word_vectors(words, base_vocabulary)
+    bag_of_words = word_vectors(words, base_vocabulary)
     
-    word_dict = word_to_vector_dictionary(words, bug_of_words)
+    word_dict = word_to_vector_dictionary(words, bag_of_words)
     
     vectors_to_file(word_dict)
     
-    kmeans = k_means(bug_of_words)
+    kmeans = k_means(bag_of_words)
     #print(kmeans.labels_)
